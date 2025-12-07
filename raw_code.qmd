@@ -30,6 +30,103 @@ REE <- REE %>%
 
 ## EDA
 ```{r}
+# Histogram of REE
+ggplot(REE, aes(x = REE)) +
+  geom_histogram(fill = "skyblue", color = "black") +
+  labs(title = "Distribution of REE") +
+  theme_bw()
 
+# Histogram of REE/kg
+ggplot(REE, aes(x = REEperKG)) +
+  geom_histogram(fill = "lightgreen", color = "black") +
+  labs(title = "Distribution of REE per kg") +
+  theme_bw()
+```
+```{r}
+ggplot(REE, aes(x = Obese, y = REE)) +
+  geom_boxplot(fill = "skyblue", color = "black") +
+  labs(title = "REE by Obesity") +
+  theme_bw()
+
+ggplot(REE, aes(x = Obese, y = REEperKG)) +
+  geom_boxplot(fill = "lightgreen", color = "black") +
+  labs(title = "REE/kg by Obesity") +
+  theme_bw()
+
+ggplot(REE, aes(x = Ventilator, y = REE)) +
+  geom_boxplot(fill = "skyblue", color = "black") +
+  labs(title = "REE by Ventilator Use") +
+  theme_bw()
+
+ggplot(REE, aes(x = Ventilator, y = REEperKG)) +
+  geom_boxplot(fill = "lightgreen", color = "black") +
+  labs(title = "REE/kg by Ventilator Use") +
+  theme_bw()
+
+ggplot(REE, aes(x = ICUorSDU, y = REE)) +
+  geom_boxplot(fill = "skyblue", color = "black") +
+  labs(title = "REE by Location (ICU vs SDU)") +
+  theme_bw()
+
+ggplot(REE, aes(x = ICUorSDU, y = REEperKG)) +
+  geom_boxplot(fill = "lightgreen", color = "black") +
+  labs(title = "REE/kg by Location (ICU vs SDU)") +
+  theme_bw()
 ```
 
+```{r}
+# Facet by patient: slope patterns
+ggplot(REE, aes(x = Measurement, y = REEperKG)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ ID, scales = "free_y") +
+  labs(title = "REE per kg over Time for Each Patient") +
+  theme_bw()
+
+# Patient trajectories (spaghetti plot)
+ggplot(REE, aes(x = Measurement, y = REEperKG, group = ID, color = ID)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Longitudinal REE/kg Trajectories by Patient") +
+  theme_bw() +
+  theme(legend.position = "right")
+```
+```{r}
+# Boxplot by patient
+ggplot(REE, aes(x = ID, y = REE)) +
+  geom_boxplot(outlier.colour = "red") +
+  labs(title = "REE by Patient") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Boxplot by patient
+ggplot(REE, aes(x = ID, y = REEperKG)) +
+  geom_boxplot(outlier.colour = "red") +
+  labs(title = "REE/kg by Patient") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# Proportion of Ventilation by Location
+ggplot(REE, aes(x = ICUorSDU, fill = Ventilator)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Proportion", title = "Ventilator Use by Location") +
+  theme_bw()
+```
+```{r}
+# REE vs BMI
+ggplot(REE, aes(x = BMI, y = REE)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, colour = "black") +
+  labs(title = "REE vs BMI") +
+  theme_bw()
+
+# REE/kg vs BMI
+ggplot(REE, aes(x = BMI, y = REEperKG, colour = Obese)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", se = FALSE, linetype = "dashed") +
+  labs(title = "REE/kg vs BMI") +
+  theme_bw()
+```
