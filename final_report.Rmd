@@ -1,0 +1,24 @@
+---
+title: "Post–Surgery Resting Energy Expenditure"
+author: "Eunice Lee"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  bookdown::pdf_document2:
+    latex_engine: xelatex
+    toc: false
+editor: visual
+---
+
+# Background & Objectives
+
+# Data & Exploratory Analysis
+
+# Model Rationale, Implementation, & Evaluation
+
+# Results
+
+# Conclusion & Future Works
+
+\pagebreak
+
+# Appendix

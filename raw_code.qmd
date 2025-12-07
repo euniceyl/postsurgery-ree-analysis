@@ -1,0 +1,35 @@
+---
+title: "STA 440 Final Project: Code Script"
+author: "Eunice Lee"
+format: pdf
+editor: visual
+---
+
+## Package Import & Data Cleaning
+```{r}
+library(dplyr)
+library(tidyr)
+library(readr)
+library(ggplot2)
+```
+
+```{r}
+load("REE.RData")
+```
+
+```{r}
+REE <- REE %>%
+  mutate(
+    ID = factor(ID),
+    Obese = factor(Obese, levels = c(0, 1)),
+    Ventilator = factor(Ventilator, levels = c(0, 1)),
+    ICUorSDU   = factor(ICUorSDU, levels = c("ICU", "SDU")),
+    Measurement = as.numeric(Measurement)
+  )
+```
+
+## EDA
+```{r}
+
+```
+
