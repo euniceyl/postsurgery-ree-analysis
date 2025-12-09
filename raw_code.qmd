@@ -130,7 +130,7 @@ ggplot(REE, aes(x = BMI, y = REEperKG, colour = Obese)) +
   labs(title = "REE/kg vs BMI") +
   theme_bw()
 ```
-## Final Model
+## Initial Model
 ```{r}
 library(lme4)
 ```
