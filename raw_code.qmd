@@ -130,24 +130,83 @@ ggplot(REE, aes(x = BMI, y = REEperKG, colour = Obese)) +
   labs(title = "REE/kg vs BMI") +
   theme_bw()
 ```
-## Modeling
+## Final Model
 ```{r}
 library(lme4)
 ```
 ```{r}
 model_REEperKG <- lmer(
-  REEperKG ~ Obese * Measurement + Ventilator + ICUorSDU + (1 | ID),
+  REEperKG ~ Obese * Measurement + ICUorSDU * Measurement + Ventilator + (1 | ID),
   data = REE
 )
 
 summary(model_REEperKG)
 ```
 ```{r}
+ggplot(REE, aes(x = Measurement, y = REEperKG, color = Obese)) +
+  geom_point(size = 2, alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE,
+              aes(fill = Obese), alpha = 0.2) +
+  facet_wrap(~ ICUorSDU) +
+  labs(title = "REE per kg Over Recovery by Location",
+       y = "REE/kg (kcal/kg/day)") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill="grey90"),
+        strip.text = element_text(size=11))
+```
+```{r}
+ggplot(REE, aes(x = Measurement, y = REEperKG, color = ICUorSDU)) +
+  geom_point(size = 2, alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE,
+              aes(fill = ICUorSDU), alpha = 0.2) +
+  facet_wrap(~ Obese) +
+  labs(title = "REE per kg Over Recovery by Obesity Status",
+       y = "REE/kg (kcal/kg/day)",
+       color = "Location",
+       fill = "Location") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill="grey90"),
+        strip.text = element_text(size=11))
+```
+
+```{r}
 model_REE <- lmer(
-  REE ~ Obese * Measurement + Ventilator + ICUorSDU + (1 | ID),
+  REE ~ Obese * Measurement + ICUorSDU * Measurement + Ventilator + (1 | ID),
   data = REE
 )
 
 summary(model_REE)
+```
+```{r}
+ggplot(REE, aes(x = Measurement, y = REE, color = Obese)) +
+  geom_point(size = 2, alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE,
+              aes(fill = Obese), alpha = 0.2) +
+  facet_wrap(~ ICUorSDU) +
+  labs(title = "Absolute REE Over Recovery by Location",
+       y = "REE (kcal/day)") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill="grey90"),
+        strip.text = element_text(size=11))
+```
+```{r}
+ggplot(REE, aes(x = Measurement, y = REE, color = ICUorSDU)) +
+  geom_point(size = 2, alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE,
+              aes(fill = ICUorSDU), alpha = 0.2) +
+  facet_wrap(~ Obese) +
+  labs(title = "Absolute REE Over Recovery by Obesity Status",
+       y = "REE (kcal/day)",
+       color = "Location",
+       fill = "Location") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill="grey90"),
+        strip.text = element_text(size=11))
+```
+
+## Model Diagnostics
+
+```{r}
+
 ```
 
