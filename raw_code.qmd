@@ -204,7 +204,7 @@ ggplot(REE, aes(x = Measurement, y = REE, color = ICUorSDU)) +
         strip.text = element_text(size=11))
 ```
 
-## Model Diagnostics
+## Initial Model Diagnostics
 
 ```{r}
 # Residual plots
@@ -325,4 +325,73 @@ anova(model_REE_full_ML, model_REE_no_locInt)
 anova(model_REE_full_ML, model_REE_no_obInt)
 anova(model_REE_full_ML, model_REE_main)
 
+```
+## Final Model
+```{r}
+REEperKG_model <- lmer(
+  REEperKG ~ Obese * Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE
+)
+
+summary(REEperKG_model)
+```
+
+```{r}
+REE_model <- lmer(
+  REE ~ Obese * Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE
+)
+summary(REE_model)
+```
+
+## Final Model Assessment
+
+```{r}
+# Residual plots
+plot(
+  fitted(REEperKG_model),
+  resid(REEperKG_model, type = "pearson"),
+  pch = 19, col = "black",
+  xlab = "Fitted Values",
+  ylab = "Pearson Residuals",
+  main = "Residuals vs Fitted: REEperKG"
+)
+abline(h = 0, col = "red", lty = 2, lwd = 2)
+
+plot(
+  fitted(REE_model),
+  resid(REE_model, type = "pearson"),
+  pch = 19, col = "black",
+  xlab = "Fitted Values",
+  ylab = "Pearson Residuals",
+  main = "Residuals vs Fitted: REE"
+)
+abline(h = 0, col = "red", lty = 2, lwd = 2)
+```
+```{r}
+# QQ plots: residuals
+qqnorm(resid(REEperKG_model),
+       main = "Q-Q Plot of Residuals: REEperKG",
+       pch = 19, col = "black")
+qqline(resid(REEperKG_model), col = "red", lwd = 2)
+
+qqnorm(resid(REE_model),
+       main = "Q-Q Plot of Residuals: REE",
+       pch = 19, col = "black")
+qqline(resid(REE_model), col = "red", lwd = 2)
+
+
+## QQ plots: random effects
+REEperKG_re <- ranef(REEperKG_model)$ID[[1]]
+REE_re      <- ranef(REE_model)$ID[[1]]
+
+qqnorm(REEperKG_re,
+       main = "Q-Q Plot of Random Intercepts: REEperKG",
+       pch = 19, col = "black")
+qqline(REEperKG_re, col = "red", lwd = 2)
+
+qqnorm(REE_re,
+       main = "Q-Q Plot of Random Intercepts: REE",
+       pch = 19, col = "black")
+qqline(REE_re, col = "red", lwd = 2)
 ```
