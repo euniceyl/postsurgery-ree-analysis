@@ -207,6 +207,122 @@ ggplot(REE, aes(x = Measurement, y = REE, color = ICUorSDU)) +
 ## Model Diagnostics
 
 ```{r}
+# Residual plots
+plot(
+  fitted(model_REEperKG),
+  resid(model_REEperKG, type = "pearson"),
+  pch = 19, col = "black",
+  xlab = "Fitted Values",
+  ylab = "Pearson Residuals",
+  main = "Residuals vs Fitted: REEperKG"
+)
+abline(h = 0, col = "red", lty = 2, lwd = 2)
+
+plot(
+  fitted(model_REE),
+  resid(model_REE, type = "pearson"),
+  pch = 19, col = "black",
+  xlab = "Fitted Values",
+  ylab = "Pearson Residuals",
+  main = "Residuals vs Fitted: REE"
+)
+abline(h = 0, col = "red", lty = 2, lwd = 2)
 
 ```
+```{r}
+# QQ plots: residuals
+qqnorm(resid(model_REEperKG),
+       main = "Q-Q Plot of Residuals: REEperKG",
+       pch = 19, col = "black")
+qqline(resid(model_REEperKG), col = "red", lwd = 2)
 
+qqnorm(resid(model_REE),
+       main = "Q-Q Plot of Residuals: REE",
+       pch = 19, col = "black")
+qqline(resid(model_REE), col = "red", lwd = 2)
+
+
+## QQ plots: random effects
+re_REEperKG <- ranef(model_REEperKG)$ID[[1]]
+re_REE      <- ranef(model_REE)$ID[[1]]
+
+qqnorm(re_REEperKG,
+       main = "Q-Q Plot of Random Intercepts: REEperKG",
+       pch = 19, col = "black")
+qqline(re_REEperKG, col = "red", lwd = 2)
+
+qqnorm(re_REE,
+       main = "Q-Q Plot of Random Intercepts: REE",
+       pch = 19, col = "black")
+qqline(re_REE, col = "red", lwd = 2)
+```
+```{r}
+# REEperKG: Ratio test
+model_REEperKG_full_ML <- update(model_REEperKG, REML = FALSE)
+
+## Drop ICU x Measurement
+model_REEperKG_no_locInt <- lmer(
+  REEperKG ~ Obese * Measurement + ICUorSDU + Measurement + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+## Drop Obese x Measurement
+model_REEperKG_no_obInt <- lmer(
+  REEperKG ~ Obese + Measurement + ICUorSDU * Measurement + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+## Drop both interactions (main-effects only)
+model_REEperKG_main <- lmer(
+  REEperKG ~ Obese + Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+## AIC & BIC
+AIC(model_REEperKG_full_ML, model_REEperKG_no_locInt, model_REEperKG_no_obInt, model_REEperKG_main)
+BIC(model_REEperKG_full_ML, model_REEperKG_no_locInt, model_REEperKG_no_obInt, model_REEperKG_main)
+
+## Likelihood ratio tests
+anova(model_REEperKG_full_ML, model_REEperKG_no_locInt)
+anova(model_REEperKG_full_ML, model_REEperKG_no_obInt)
+anova(model_REEperKG_full_ML, model_REEperKG_main)
+
+```
+```{r}
+# REE: Ratio test
+model_REE_full_ML <- update(model_REE, REML = FALSE)
+
+# Drop ICU x Measurement
+model_REE_no_locInt <- lmer(
+  REE ~ Obese * Measurement + ICUorSDU + Measurement + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+# Drop Obese x Measurement
+model_REE_no_obInt <- lmer(
+  REE ~ Obese + Measurement + ICUorSDU * Measurement + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+# Drop both interactions (main-effects only)
+model_REE_main <- lmer(
+  REE ~ Obese + Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+# AIC & BIC
+AIC(model_REE_full_ML, model_REE_no_locInt, model_REE_no_obInt, model_REE_main)
+BIC(model_REE_full_ML, model_REE_no_locInt, model_REE_no_obInt, model_REE_main)
+
+# Likelihood ratio tests
+anova(model_REE_full_ML, model_REE_no_locInt)
+anova(model_REE_full_ML, model_REE_no_obInt)
+anova(model_REE_full_ML, model_REE_main)
+
+```
