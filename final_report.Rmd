@@ -9,15 +9,23 @@ output:
 editor: visual
 ---
 
-# Background & Objectives
+# Background & Motivation
+
+Resting energy expenditure (REE) represents the metabolic energy required to sustain essential physiological function, and plays a critical role in guiding nutritional support for patients after surgery. Prior research suggests that obesity, ventilator dependence, and illness severity may influence both the baseline level and trajectory of metabolic demand, yet the characterization of these effects in clinical populations remains incomplete. To address this need for a comprehensive evaluation, 11 post-operative patients were assessed with follow-up measurements taken longitudinally at different stages of recovery. Our objective is to develop an appropriate modeling framework that investigates how raw and weight-adjusted REE change over time, and to determine how these patterns differ based on clinical factors including obesity status, ventilator use, and patient location (ICU vs SDU).
 
 # Data & Exploratory Analysis
 
-# Model Rationale, Implementation, & Evaluation
+Our data includes 35 indirect calorimetry measurements collected from 11 post-operative cardiac surgery patients (4 obese, 7 non-obese), each contibuting between 1 to 5 observations over recovery. Key variables include absolute REE, weight-adjusted REE (per kg), obesity status, ventilator use, location (ICU or SDU), and measurement index representing follow-up time ordinally.
+
+To explore this data, the overall distributions of REE and REE/kg were first examined. Despite a slight right-skew, values were overall continuous and suitable for linear modeling. (Figure 1A-B) Cross-sectional comparisons by location and ventilator use further revealed elevated metabolic requirements in ICU over SDU, and ventilated over non-ventilated patients. (Figure 2A-B, 3A-B) Here, it was important to note that ventilators were only used in the ICU, informing us that its effect should only be considered for measurements taken in the ICU to prevent any misleading interpretations in SDU. (Figure 4) Furthermore, scatterplots of REE and REE/kg over time displayed non-parallel trends across obesity groups, indicating that obese patients tend to have higher absolute REE but smaller differences in REE/kg, suggesting different effects of obesity on metabolic demand when adjusted for body weight. (Figure 5A-B) The same pattern could be observed through boxplots grouped by obesity groups as well. (Figure 6A-B) Altogether, this suggested that all factors had potential correlation to REE, and that measurement (time) was possibly associated with obesity status and location (ICU/SDU) as an interaction effect.
+
+Guided by this exploratory data analysis, we initially tried fitting a linear mixed-effects models containing all variables in addition to two potential interaction effects: (1) obesity and measurement (2) location and measurement. Results showed that including the obesity-measurement interaction term substantially improved model fit, supporting the hypothesis that metablic recovery differs between obese and non-obese patients. However, adding the location-measurement interaction term did not improve fit based on AIC/BIC caluclations, and yielded non-significant effects for both REE and REE/kg. (Figure 7) As this indicated that rate of change over time is likely not associated with ICU versus SDU patients, the location-measurement interaction was dropped in the final model to avoid multicollinearity.
+
+# Model Rationale, Implementation, Evaluation
 
 # Results
 
-# Conclusion & Future Works
+# Conclusion & Future Work
 
 \pagebreak
 
