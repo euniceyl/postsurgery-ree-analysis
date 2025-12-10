@@ -395,3 +395,95 @@ qqnorm(REE_re,
        pch = 19, col = "black")
 qqline(REE_re, col = "red", lwd = 2)
 ```
+```{r}
+# Pearson residuals
+REE$resid_REEkg <- resid(REEperKG_model, type = "pearson")
+
+ggplot(REE, aes(x = Measurement, y = resid_REEkg)) +
+  geom_point(color = "black", alpha = 0.75, size = 2) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "red", linewidth = 1) +
+  geom_smooth(method = "loess", se = FALSE, color = "blue", linewidth = 1) +
+  labs(
+    title = "Residuals vs Measurement: REE per kg Model",
+    x = "Measurement (Recovery Day Index)",
+    y = "Pearson Residuals"
+  ) +
+  theme_bw()
+```
+```{r}
+REE$resid_REE <- resid(REE_model, type = "pearson")
+
+ggplot(REE, aes(x = Measurement, y = resid_REE)) +
+  geom_point(color = "black", alpha = 0.75, size = 2) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "red", linewidth = 1) +
+  geom_smooth(method = "loess", se = FALSE, color = "blue", linewidth = 1) +
+  labs(
+    title = "Residuals vs Measurement: Absolute REE Model",
+    x = "Measurement (Recovery Day Index)",
+    y = "Pearson Residuals"
+  ) +
+  theme_bw()
+```
+```{r}
+plot_residual_vs <- function(model, var, title) {
+  res_df <- data.frame(
+    Resid = resid(model, type = "pearson"),
+    Var = REE[[var]]
+  )
+  
+  # Detect categorical vs numeric
+  if (is.factor(res_df$Var) || is.character(res_df$Var)) {
+    ggplot(res_df, aes(x = Var, y = Resid)) +
+      geom_boxplot(fill = "grey85", color = "black", alpha = 0.6) +
+      geom_jitter(width = 0.1, alpha = 0.6, size = 2) +
+      geom_hline(yintercept = 0, linetype = "dotted",
+                 color = "red", linewidth = 1) +
+      labs(x = var, y = "Pearson Residuals", title = title) +
+      theme_bw(base_size = 13)
+  } else {
+    ggplot(res_df, aes(x = Var, y = Resid)) +
+      geom_point(color = "black", alpha = 0.7, size = 2) +
+      geom_smooth(method = "loess", se = FALSE,
+                  color = "blue", linewidth = 1) +
+      geom_hline(yintercept = 0, linetype = "dotted",
+                 color = "red", linewidth = 1) +
+      labs(x = var, y = "Pearson Residuals", title = title) +
+      theme_bw(base_size = 13)
+  }
+}
+```
+
+```{r}
+plot_residual_vs(REE_model, "Measurement",
+                 "Residuals vs Measurement: Absolute REE Model")
+
+plot_residual_vs(REE_model, "Obese",
+                 "Residuals vs Obesity Status: Absolute REE Model")
+
+plot_residual_vs(REE_model, "ICUorSDU",
+                 "Residuals vs ICU/SDU: Absolute REE Model")
+
+plot_residual_vs(REE_model, "Ventilator",
+                 "Residuals vs Ventilation: Absolute REE Model")
+
+plot_residual_vs(REE_model, "BMI",
+                 "Residuals vs BMI: Absolute REE Model")
+```
+
+```{r}
+plot_residual_vs(REEperKG_model, "Measurement",
+                 "Residuals vs Measurement: REE/kg Model")
+
+plot_residual_vs(REEperKG_model, "Obese",
+                 "Residuals vs Obesity Status: REE/kg Model")
+
+plot_residual_vs(REEperKG_model, "ICUorSDU",
+                 "Residuals vs ICU/SDU: REE/kg Model")
+
+plot_residual_vs(REEperKG_model, "Ventilator",
+                 "Residuals vs Ventilation: REE/kg Model")
+
+plot_residual_vs(REEperKG_model, "BMI",
+                 "Residuals vs BMI: REE/kg Model")
+```
+
