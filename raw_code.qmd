@@ -487,3 +487,21 @@ plot_residual_vs(REEperKG_model, "BMI",
                  "Residuals vs BMI: REE/kg Model")
 ```
 
+```{r}
+library(lmerTest)
+
+# Refit your models using lmerTest::lmer()
+REE_model <- lmer(
+  REE ~ Obese * Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE
+)
+
+REEperKG_model <- lmer(
+  REEperKG ~ Obese * Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE
+)
+
+summary(REE_model)
+summary(REEperKG_model)
+```
+
