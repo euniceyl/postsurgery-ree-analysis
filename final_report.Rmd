@@ -23,6 +23,49 @@ Guided by this exploratory data analysis, we initially tried fitting a linear mi
 
 # Model Rationale, Implementation, Evaluation
 
+## Model Rationale
+As each patient contributed multiple REE measurements at different time points in recovery, a linear mixed-effects model was implemented to properly account for correlation among repeated measurements from the same patient. This framework allows us to separately account for between-patient diferences in baseline metabolic level and within-patient changes over time. As our exploratory analysis suggested that obesity may affect how REE changes across recovery, whiile ICU location mainly affects baseline REE rather than its slope, we included an obesity-measurement interaction in the final model, with ventilator use and location as additional fixed effects. Hence, for \(i = 1, \dots, 11\) patients and \(j = 1, \dots, n_i\) repeated REE observations per patient, our final model was:
+
+Absolute REE:
+$$
+\begin{aligned}
+\text{REE}_{ij} 
+    &= \beta_0 
+     + \beta_1 \text{Obesity}_i
+     + \beta_2 \text{Measurement}_{ij} \\
+    &\quad + \beta_3 (\text{Obesity}_i \times \text{Measurement}_{ij})
+     + \beta_4 \text{Location}_{ij} \\
+    &\quad + \beta_5 \text{Ventilator}_{ij}
+     + \mu_i + \varepsilon_{ij}
+\end{aligned}
+$$
+Weight-adjusted REE:
+$$
+\begin{aligned}
+\text{REEperKG}_{ij} 
+    &= \beta_0 
+     + \beta_1 \text{Obesity}_i
+     + \beta_2 \text{Measurement}_{ij} \\
+    &\quad + \beta_3 (\text{Obesity}_i \times \text{Measurement}_{ij})
+     + \beta_4 \text{Location}_{ij} \\
+    &\quad + \beta_5 \text{Ventilator}_{ij}
+     + \mu_i + \varepsilon_{ij}
+\end{aligned}
+$$
+
+For both cases, random effects and residual errors were modeled as:
+$$
+\mu_i \sim \mathcal{N}(0, \sigma_\mu^2), \quad
+\varepsilon_{ij} \sim \mathcal{N}(0, \sigma^2)
+$$
+The random intercept $\mu_i$ captures between-patient variation in baseline REE, reflecting the substantial differences that were observed in our EDA. (Figure 8) The residual error $\varepsilon_{ij}$ represents within-patient variation not explained by the fixed effects. A random slope was initially considered for measurement, but was excluded since most patients only had 1-3 repeated observations, leading to insufficient amount of data for a reliable slop estimation. (Figure 9)
+
+## Model Implementation
+We implemented this model using the lme4 package in R. This decision to use a frequentist LMM model rather than a Bayesian framework was due to several reasons. First, given our very small sample size, making fully Bayesian hierarchical estimation would be less stable in the absence of informative priors. As the primary goal of this study is to make inferences on fixed effects rather than full posterior uncertainty quantification, and exploratory analysis showed that assumptions of linearity and normality could be justified, the frequentist approach was much more simple and suitable for this analysis.
+
+## Model Evaluation
+To assess model fit for both REE and REE/kg, we plotted residual vs fitted values and observed no strong no strong evdience of heteroscedasticity. With residuals generally centered around zero across the fitted values and randomly scattered, the constant variance assumption was met since no clear clustering or fanning patterns were present. (Figure 10A-B) The Q-Q plots for both residuals and random effects demonstrated approximate normality, with minor deviations in the tails but no substantial departures from our model assumptions. (Figure 11A-B, 12A-B). To check for linearity of observations over time, residuals were also plotted against the measurement index. As no strong patterns were found beyond slight curvature, our use of measurement as a linear fixed effect was therefore supported. (Figure 13A-B).
+
 # Results
 
 # Conclusion & Future Work
