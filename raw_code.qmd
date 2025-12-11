@@ -76,18 +76,18 @@ ggplot(REE, aes(x = ICUorSDU, y = REEperKG)) +
 
 ```{r}
 # Facet by patient: slope patterns
-ggplot(REE, aes(x = Measurement, y = REEperKG)) +
+ggplot(REE, aes(x = Measurement, y = REE)) +
   geom_line() +
   geom_point() +
   facet_wrap(~ ID, scales = "free_y") +
-  labs(title = "REE per kg over Time for Each Patient") +
+  labs(title = "REE over Time for Each Patient") +
   theme_bw()
 
 # Patient trajectories (spaghetti plot)
-ggplot(REE, aes(x = Measurement, y = REEperKG, group = ID, color = ID)) +
+ggplot(REE, aes(x = Measurement, y = REE, group = ID, color = ID)) +
   geom_line() +
   geom_point() +
-  labs(title = "Longitudinal REE/kg Trajectories by Patient") +
+  labs(title = "Longitudinal REE Trajectories by Patient") +
   theme_bw() +
   theme(legend.position = "right")
 ```
