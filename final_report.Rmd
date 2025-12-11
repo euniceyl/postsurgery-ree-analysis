@@ -1,5 +1,5 @@
 ---
-title: "Post–Surgery Resting Energy Expenditure"
+title: "STA 440 Final Project: Post–Surgery Resting Energy Expenditure"
 author: "Eunice Lee"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output:
@@ -11,22 +11,22 @@ editor: visual
 
 # Background & Motivation
 
-Resting energy expenditure (REE) represents the metabolic energy required to sustain essential physiological function, and plays a critical role in guiding nutritional support for patients after surgery. Prior research suggests that obesity, ventilator dependence, and illness severity may influence both the baseline level and trajectory of metabolic demand, yet the characterization of these effects in clinical populations remains incomplete. To address this need for a comprehensive evaluation, 11 post-operative patients were assessed with follow-up measurements taken longitudinally at different stages of recovery. Our objective is to develop an appropriate modeling framework that investigates how raw and weight-adjusted REE change over time, and to determine how these patterns differ based on clinical factors including obesity status, ventilator use, and patient location (ICU vs SDU).
+Resting energy expenditure (REE) represents the metabolic energy required to sustain essential physiological function, and plays a critical role in guiding nutritional support for patients after surgery. Prior research suggests that obesity, ventilator dependence, and illness severity may influence both the baseline level and trajectory of metabolic demand. However, the characterization of these effects in clinical populations remains incomplete. To address this need for a comprehensive evaluation, 11 post-operative patients within 72 hours of cardiac surgery were assessed with follow-up measurements taken longitudinally at different stages of recovery. Our objective is to develop an appropriate modeling framework that investigates how raw and weight-adjusted REE change over time, and to determine how these patterns differ by clinical factors including obesity status, ventilator use, and patient location (ICU vs SDU).
 
 # Data & Exploratory Analysis
 
-Our data includes 35 indirect calorimetry measurements collected from 11 post-operative cardiac surgery patients (4 obese, 7 non-obese), each contibuting between 1 to 5 observations over recovery. Key variables include absolute REE, weight-adjusted REE (per kg), obesity status, ventilator use, location (ICU or SDU), and measurement index representing follow-up time ordinally.
+Our data includes 35 indirect calorimetry measurements collected from 11 post-operative cardiac surgery patients (4 obese, 7 non-obese), each contributing between 1 to 5 observations over recovery during hospitalization. Key variables include absolute REE, weight-adjusted REE (per kg), obesity status, ventilator use, location (ICU or SDU), and measurement index ordinally representing follow-up time.
 
-To explore this data, the overall distributions of REE and REE/kg were first examined. Despite a slight right-skew, values were overall continuous and suitable for linear modeling. (Figure 1A-B) Cross-sectional comparisons by location and ventilator use further revealed elevated metabolic requirements in ICU over SDU, and ventilated over non-ventilated patients. (Figure 2A-B, 3A-B) Here, it was important to note that ventilators were only used in the ICU, informing us that its effect should only be considered for measurements taken in the ICU to prevent any misleading interpretations in SDU. (Figure 4) Furthermore, scatterplots of REE and REE/kg over time displayed non-parallel trends across obesity groups, indicating that obese patients tend to have higher absolute REE but smaller differences in REE/kg, suggesting different effects of obesity on metabolic demand when adjusted for body weight. (Figure 5A-B) The same pattern could be observed through boxplots grouped by obesity groups as well. (Figure 6A-B) Altogether, this suggested that all factors had potential correlation to REE, and that measurement (time) was possibly associated with obesity status and location (ICU/SDU) as an interaction effect.
+To explore this data, the overall distributions of REE and REE/kg were first examined. Despite a slight right-skew, values were overall unimodal and suitable for linear modeling. (Figure 1) Cross-sectional comparisons by location and ventilator use further revealed elevated metabolic requirements in ICU over SDU, and ventilated over non-ventilated patients. (Figure 2, 3) Here, it was important to note that ventilators were only used in the ICU, informing us that its effect should only be considered for measurements taken in the ICU to prevent any misleading interpretations in SDU. (Figure 4) Furthermore, scatterplots of REE and REE/kg over time displayed non-parallel trends across obesity groups, indicating that obese patients tend to have higher absolute REE but smaller differences in REE/kg, implying that the effects of obesity on metabolic demand changed when adjusted for body weight. (Figure 5, 6) Altogether, this suggested that all factors had potential correlation to REE, and that measurement (time) was possibly associated with obesity status and location (ICU/SDU) as interaction effects.
 
-Guided by this exploratory data analysis, we initially tried fitting a linear mixed-effects models containing all variables in addition to two potential interaction effects: (1) obesity and measurement (2) location and measurement. Results showed that including the obesity-measurement interaction term substantially improved model fit, supporting the hypothesis that metablic recovery differs between obese and non-obese patients. However, adding the location-measurement interaction term did not improve fit based on AIC/BIC caluclations, and yielded non-significant effects for both REE and REE/kg. (Figure 7) As this indicated that rate of change over time is likely not associated with ICU versus SDU patients, the location-measurement interaction was dropped in the final model to avoid multicollinearity.
+Guided by this exploratory data analysis, we initially tried fitting a linear mixed-effects models containing all variables in addition to two interaction effects: (1) obesity and measurement (2) location and measurement. Results showed that including the obesity-measurement interaction term substantially improved model fit, supporting the hypothesis that metabolic recovery differs between obese and non-obese patients. However, adding the location-measurement interaction term worsened the model fit based on AIC/BIC calculations, and yielded statistically insignificant differences for both REE and REE/kg. (Table 3, 4) As this indicated that rate of change over time is likely not associated with ICU vs SDU patients, the location-measurement interaction was dropped in the final model to avoid multicollinearity.
 
 # Model Rationale, Implementation, Evaluation
 
 ## Model Rationale
-As each patient contributed multiple REE measurements at different time points in recovery, a linear mixed-effects model was implemented to properly account for correlation among repeated measurements from the same patient. This framework allows us to separately account for between-patient diferences in baseline metabolic level and within-patient changes over time. As our exploratory analysis suggested that obesity may affect how REE changes across recovery, whiile ICU location mainly affects baseline REE rather than its slope, we included an obesity-measurement interaction in the final model, with ventilator use and location as additional fixed effects. Hence, for \(i = 1, \dots, 11\) patients and \(j = 1, \dots, n_i\) repeated REE observations per patient, our final model was:
+As each patient contributed multiple REE measurements at different recovery time points, a linear mixed-effects model was implemented to properly account for correlation among repeated measurements from the same patient. This framework allowed us to account for between-patient differences in baseline metabolic level and within-patient changes over time separately. As our exploratory analysis suggested that obesity may affect how REE changes over the recovery period, while ICU location mainly affects baseline REE rather than its slope, we included an obesity-measurement interaction in the final model, with ventilator use and location as additional fixed effects. Hence, for \(i = 1, \dots, 11\) patients and \(j = 1, \dots, n_i\) repeated REE observations per patient, our final model was:
 
-Absolute REE:
+**Absolute REE:**
 $$
 \begin{aligned}
 \text{REE}_{ij} 
@@ -39,7 +39,7 @@ $$
      + \mu_i + \varepsilon_{ij}
 \end{aligned}
 $$
-Weight-adjusted REE:
+**Weight-adjusted REE:**
 $$
 \begin{aligned}
 \text{REEperKG}_{ij} 
@@ -52,30 +52,483 @@ $$
      + \mu_i + \varepsilon_{ij}
 \end{aligned}
 $$
-
 For both cases, random effects and residual errors were modeled as:
 $$
 \mu_i \sim \mathcal{N}(0, \sigma_\mu^2), \quad
 \varepsilon_{ij} \sim \mathcal{N}(0, \sigma^2)
 $$
-The random intercept $\mu_i$ captures between-patient variation in baseline REE, reflecting the substantial differences that were observed in our EDA. (Figure 8) The residual error $\varepsilon_{ij}$ represents within-patient variation not explained by the fixed effects. A random slope was initially considered for measurement, but was excluded since most patients only had 1-3 repeated observations, leading to insufficient amount of data for a reliable slop estimation. (Figure 9)
+The random intercept $\mu_i$ captures between-patient variation in baseline REE, reflecting the substantial differences observed in our EDA. (Figure 7) The residual error $\varepsilon_{ij}$ represents within-patient variation not explained by the fixed effects. A random slope for measurement was initially considered, but excluded since most patients only had 1-3 repeated observations, leading to insufficient amount of data for a reliable slope estimation. (Figure 8)
 
 ## Model Implementation
-We implemented this model using the lme4 package in R. This decision to use a frequentist LMM model rather than a Bayesian framework was due to several reasons. First, given our very small sample size, making fully Bayesian hierarchical estimation would be less stable in the absence of informative priors. As the primary goal of this study is to make inferences on fixed effects rather than full posterior uncertainty quantification, and exploratory analysis showed that assumptions of linearity and normality could be justified, the frequentist approach was much more simple and suitable for this analysis.
+We implemented this model using the lme4 package in R. This decision to use a frequentist LMM model rather than a Bayesian framework was due to several reasons. First, given our very small sample size, making fully Bayesian hierarchical estimations would be less stable in the absence of informative priors. Also, since the primary goal of this study is to make inferences on fixed effects rather than full posterior uncertainty quantification, and our exploratory analysis showed that assumptions of linearity and normality could be justified, the frequentist approach was the simplest and most suitable framework for this analysis.
 
 ## Model Evaluation
-To assess model fit for both REE and REE/kg, we plotted residual vs fitted values and observed no strong evidence of heteroscedasticity. With residuals generally centered around zero across the fitted values and randomly scattered, the constant variance assumption was met since no clear clustering or fanning patterns were present. (Figure 10A-B) The Q-Q plots for both residuals and random effects demonstrated approximate normality, with minor deviations in the tails but no substantial departures from our model assumptions. (Figure 11A-B, 12A-B). To check for linearity of observations over time, residuals were also plotted against the measurement index. As no strong patterns were found beyond slight curvature, our use of measurement as a linear fixed effect was therefore supported. (Figure 13A-B).
+To assess model fit for both REE and REE/kg, we plotted residual vs fitted values and observed no strong evidence of heteroscedasticity. With residuals generally centered around zero across the fitted values and randomly scattered, the constant variance assumption was met since no clear clustering or fanning patterns were present. (Figure 9) Q-Q plots for both residuals and random effects demonstrated approximate normality, with minor deviations in the tails but no substantial departures from our model assumptions. (Figure 10, 11). To check for linearity of observations over time, residuals were also plotted against the measurement index. As no strong patterns were observed beyond mild curvature, our treatment of measurement as a linear fixed effect was appropriate for the dataset. (Figure 12).
 
 # Results
-Our model estimated a baseline intercept of 1497.43kcal/day for expected REE at the first post-operative measurement for a non-obese, non-ventilated ICU patient. Obesity had a large positive baseline effect ($\beta_1=920.25; p=0.0019$), indicating that obese patients began recovery with a significantly higher initial REE than non-obese patients. However, the negative obesity-measurement interaction ($\beta_3=-205.42; p=0.05$) demonstrated that obese patients experience a greater decline over time, whereas non-obese patients’ REE remain relatively stable or even slightly increase. Location did not have a significant effect on metabolic recovery with a p-value of 0.14, while ventilator use exhibited a modestly negative association with REE ($\beta_5=-289.40; p=0.081$) for patients in ICU. This agreed with our hypothesis since ventilated patients would have reduced work of breathing, and no observations in SDU used ventilators as discussed. Observing our random effects, substantial between-patient variability was observed with a random intercept standard deviation of 187.7kcal/day. This was consistent with our observation of large variance in baseline metabolic demands by patient, supporting the need for a mixed- effects model. The residual standard deviation of 280.3kcal/day reflected within-patient variance across measurements at different time points, demonstrating the expected physiological variability and noise in the indirect calorimetry device itself. (Table 1)
+Our model estimated a baseline intercept of 1497.43kcal/day for expected REE at the first post-operative measurement for a non-obese, non-ventilated ICU patient. Obesity had a large positive baseline effect ($\beta_1=920.25; p=0.0019$), indicating that obese patients began recovery with a significantly higher initial REE than non-obese patients. However, the negative obesity-measurement interaction ($\beta_3=-205.42; p=0.05$) suggested that obese patients may experience a greater decline over time, whereas non-obese patients’ REE remain relatively stable or even slightly increase. Location did not have a significant effect on metabolic recovery with a p-value of 0.14, while ventilator use exhibited a modestly negative association with REE ($\beta_5=-289.40; p=0.081$) for patients in ICU. This agreed with our hypothesis since ventilated patients would have reduced work of breathing, and no observations in SDU used ventilators. For random effects, a substantial between-patient variability was observed, with a random intercept standard deviation of 187.7kcal/day. This was consistent with our observation of large variance in baseline metabolic demands by patient, supporting the appropriateness of a mixed-effects model. The residual standard deviation of 280.3kcal/day reflected within-patient variance across measurements at different time points, demonstrating the expected physiological variability and noise in the indirect calorimetry device itself. (Table 1)
 
-To assess if our results changed when adjusted for body weight, the same model was applied to REE/kg as the response variable. Notably, this removed the large baseline difference between obese and non-obese patients, as the effect of obesity as no longer significant ($p=0.32$) with a gentle slope of 4.12. This indicated that a significant part of difference in absolute REE is in fact explained by body mass. However, the obesity-measurement interaction remained significant and negative ($\beta_3=-3.45; p=0.01$), implying that differences in recovery slope remain significant even after normalization by weight. Fixed effects of location and ventilator use mirrored the same direction in slope but were smaller in magnitude, suggesting reduced variability in the weight-adjusted outcomes. (Table 2)
+To assess if our results changed when adjusted for body weight, the same model was applied to REE/kg as the response variable. Notably, this removed the large baseline difference between obese and non-obese patients, as the effect of obesity as no longer significant ($p=0.32$) with a gentle slope of 4.12. This indicated that a significant part of difference in absolute REE is in fact explained by body mass. However, the obesity-measurement interaction remained negative and statistically significant ($\beta_3=-3.45; p=0.01$), implying that differences in recovery slope exist even after normalization by weight. Fixed effects of location and ventilator use mirrored the same directions in slope but were smaller in magnitude, suggesting reduced variability in the weight-adjusted outcomes. (Table 2)
 
 # Conclusion & Future Work
-In conclusion, this study examined how resting energy expenditure changes during post-operative recovery in 11 cardiac surgery patients and how trends differ by their obesity status, ventilator use, and location. Our findings reveal that obesity status affects both the baseline level and longitudinal trajectory of REE, as obese patients begin recovery with substantially higher metabolic demand but exhibits steeper decline over time compared to non-obese patients. Patients in ICU have higher baseline REE than in SDU, clinically consistent with greater physiological stress in the intensive unit, but their recovery slopes do not differ significantly by location. Among ICU patients, ventilator use was associated with modest levels of reduction in REE as expected, given the reduced work of breathing. When REE was adjusted for body weight, baseline differences between obese and non-obese patients were no longer present. However, differences in recovery rates persisted, showing that obesity still influences longitudinal trends of metabolic recovery.
+In conclusion, this study examines how absolute and weight-adjusted resting energy expenditure changes during post-operative recovery and how trends differ by patients' obesity status, ventilator status, and location. Our findings reveal that obesity affects both the baseline level and longitudinal trajectory of REE, as obese patients begin recovery with substantially higher metabolic demand but exhibit steeper decline over time compared to non-obese patients. Patients in ICU have higher baseline REE than those in SDU, clinically consistent with greater physiological stress in the intensive unit, but their recovery slopes do not differ significantly by location. Among ICU patients, ventilator use is associated with modest levels of reduction in REE as expected, given the reduced work of breathing. When REE is adjusted for weight, baseline differences between obese and non-obese patients are no longer present. However, differences in recovery rates persist, showing that obesity still influences longitudinal trends of metabolic recovery.
 
-Our study included some limitations, the main one being that measurement times were considered as an ordinal variable despite varying time intervals between each index. This assumes evenly spaced recovery time that may not accurately reflect the true timing. While our residual plot by measurement suggested that the linearity assumption was reasonably satisfied, future work should collect the precise intervals to treat time as a continuous variable. Moreover, the small sample size, unbalanced number of repeated measurements per patient, and absence of ventilator use data for patients in SDU were major limitations in availability of our data. While our model diagnostics supported a decently good fit through a mixed-effects framework, future work could be done with richer data to better predict individual recovery patterns in a more refined manner.
+Our study included some limitations, the main one being that measurements were considered as an ordinal variable despite the varying time intervals between each index. This assumed evenly spaced recovery time that may have inaccurately reflected the true timing. While our residual plot by measurement suggested that the linearity assumption was reasonably satisfied, future work should collect the precise intervals to treat time as a continuous variable. Moreover, the small sample size, unbalanced number of repeated measurements per patient, and absence of ventilator use data for patients in SDU were major limitations in the scale and availability of our data. While our model diagnostics supported an overall good fit through a mixed-effects framework, future work could be done with richer data to better predict individual recovery patterns in a more refined manner.
 
 \pagebreak
+\clearpage
 
 # Appendix
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+```{r}
+# Import packages
+library(dplyr)
+library(tidyr)
+library(readr)
+library(ggplot2)
+library(lmerTest)
+library(broom.mixed)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+```
+
+```{r}
+# Load data
+load("REE.RData")
+
+REE <- REE %>%
+  mutate(
+    ID = factor(ID),
+    Obese = factor(Obese, levels = c(0, 1)),
+    Ventilator = factor(Ventilator, levels = c(0, 1)),
+    ICUorSDU   = factor(ICUorSDU, levels = c("ICU", "SDU")),
+    Measurement = as.numeric(Measurement)
+  )
+```
+
+```{r}
+# Final models
+REE_model <- lmer(
+  REE ~ Obese * Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE
+)
+
+REEperKG_model <- lmer(
+  REEperKG ~ Obese * Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE
+)
+
+# Nested models: AIC/BIC for absolute REE
+model_REE_full_ML <- lmer(
+  REE ~ Obese * Measurement + ICUorSDU * Measurement + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+model_REE_no_locInt <- lmer(
+  REE ~ Obese * Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+model_REE_no_obInt <- lmer(
+  REE ~ Obese + Measurement + ICUorSDU * Measurement + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+model_REE_main <- lmer(
+  REE ~ Obese + Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+# Nested models: AIC/BIC for weight-adjusted REE
+model_REEperKG_full_ML <- lmer(
+  REEperKG ~ Obese * Measurement + ICUorSDU * Measurement + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+model_REEperKG_no_locInt <- lmer(
+  REEperKG ~ Obese * Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+model_REEperKG_no_obInt <- lmer(
+  REEperKG ~ Obese + Measurement + ICUorSDU * Measurement + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+
+model_REEperKG_main <- lmer(
+  REEperKG ~ Obese + Measurement + ICUorSDU + Ventilator + (1 | ID),
+  data = REE,
+  REML = FALSE
+)
+```
+
+```{r table-1, echo=FALSE, results='asis'}
+tab_REE <- tidy(
+  REE_model,
+  effects  = "fixed",
+  conf.int = TRUE
+) %>% 
+  select(-effect)
+
+kable(
+  tab_REE,
+  digits  = 3,
+  caption = "Fixed-effect estimates: absolute REE mixed-effects model"
+) %>%
+  kable_styling(
+    full_width    = FALSE,
+    latex_options = "hold_position"
+  )
+```
+
+```{r table-2, echo=FALSE, results='asis'}
+tab_REEperKG <- tidy(
+  REEperKG_model,
+  effects  = "fixed",
+  conf.int = TRUE
+) %>% 
+  select(-effect)
+
+kable(
+  tab_REEperKG,
+  digits  = 3,
+  caption = "Fixed-effect estimates: weight-adjusted REE (REE/kg) mixed-effects model"
+) %>%
+  kable_styling(
+    full_width    = FALSE,
+    latex_options = "hold_position"
+  )
+```
+
+```{r table-3, echo=FALSE, results='asis'}
+aic_REE <- AIC(
+  model_REE_full_ML,
+  model_REE_no_locInt,
+  model_REE_no_obInt,
+  model_REE_main
+)
+
+bic_REE <- BIC(
+  model_REE_full_ML,
+  model_REE_no_locInt,
+  model_REE_no_obInt,
+  model_REE_main
+)
+
+AICBIC_REE <- data.frame(
+  Model = rownames(aic_REE),
+  df    = aic_REE[, "df"],
+  AIC   = aic_REE[, "AIC"],
+  BIC   = bic_REE[, "BIC"],
+  row.names = NULL
+)
+
+kable(
+  AICBIC_REE,
+  digits  = 3,
+  caption = "AIC and BIC: absolute REE candidate mixed-effects models"
+) %>%
+  kable_styling(
+    full_width    = FALSE,
+    latex_options = "hold_position"
+  )
+```
+
+```{r table-4, echo=FALSE, results='asis'}
+aic_REEperKG <- AIC(
+  model_REEperKG_full_ML,
+  model_REEperKG_no_locInt,
+  model_REEperKG_no_obInt,
+  model_REEperKG_main
+)
+
+bic_REEperKG <- BIC(
+  model_REEperKG_full_ML,
+  model_REEperKG_no_locInt,
+  model_REEperKG_no_obInt,
+  model_REEperKG_main
+)
+
+AICBIC_REEperKG <- data.frame(
+  Model = rownames(aic_REEperKG),
+  df    = aic_REEperKG[, "df"],
+  AIC   = aic_REEperKG[, "AIC"],
+  BIC   = bic_REEperKG[, "BIC"],
+  row.names = NULL
+)
+
+kable(
+  AICBIC_REEperKG,
+  digits  = 3,
+  caption = "AIC and BIC: weight-adjusted REE candidate mixed-effects models"
+) %>%
+  kable_styling(
+    full_width    = FALSE,
+    latex_options = "hold_position"
+  )
+```
+
+```{r fig-1}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "Overall Distribution of REE and REE/kg"
+
+p_hist_ree <- ggplot(REE, aes(x = REE)) +
+  geom_histogram(fill = "skyblue", color = "black", bins = 10) +
+  labs(x = "REE (kcal/day)", y = "Count", title = "REE") +
+  theme_bw() +
+  theme(aspect.ratio = 1)
+
+p_hist_reekg <- ggplot(REE, aes(x = REEperKG)) +
+  geom_histogram(fill = "lightgreen", color = "black", bins = 10) +
+  labs(x = "REE/kg (kcal/kg/day)", y = "Count", title = "REE/kg") +
+  theme_bw() +
+  theme(aspect.ratio = 1)
+
+p_hist_ree + p_hist_reekg
+```
+
+```{r fig-2}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "Distribution of REE by Location"
+
+p_loc_ree <- ggplot(REE, aes(x = ICUorSDU, y = REE)) +
+  geom_boxplot(fill = "skyblue", color = "black") +
+  labs(x = "Location", y = "REE (kcal/day)", title = "REE") +
+  theme_bw() +
+  theme(aspect.ratio = 1)
+
+p_loc_reekg <- ggplot(REE, aes(x = ICUorSDU, y = REEperKG)) +
+  geom_boxplot(fill = "lightgreen", color = "black") +
+  labs(x = "Location", y = "REE/kg (kcal/kg/day)", title = "REE/kg") +
+  theme_bw() +
+  theme(aspect.ratio = 1)
+
+p_loc_ree + p_loc_reekg
+```
+
+```{r fig-3}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "Distribution of REE by Ventilator Status"
+
+p_vent_ree <- ggplot(REE, aes(x = Ventilator, y = REE)) +
+  geom_boxplot(fill = "skyblue", color = "black") +
+  labs(x = "Ventilator", y = "REE (kcal/day)", title = "REE") +
+  theme_bw() +
+  theme(aspect.ratio = 1)
+
+p_vent_reekg <- ggplot(REE, aes(x = Ventilator, y = REEperKG)) +
+  geom_boxplot(fill = "lightgreen", color = "black") +
+  labs(x = "Ventilator", y = "REE/kg (kcal/kg/day)", title = "REE/kg") +
+  theme_bw() +
+  theme(aspect.ratio = 1)
+
+p_vent_ree + p_vent_reekg
+```
+
+```{r fig-4}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "Ventilator Use by Location"
+
+ggplot(REE, aes(x = ICUorSDU, fill = Ventilator)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Proportion", title = "Ventilator Use by Location") +
+  theme_bw()
+```
+
+```{r fig-5}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "REE Over Time by Obesity Status"
+
+ggplot(REE, aes(x = Measurement, y = REE, color = Obese)) +
+  geom_point(size = 2, alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, aes(fill = Obese), alpha = 0.2) +
+  facet_wrap(~ ICUorSDU) +
+  labs(title = "Absolute REE Over Recovery by Location",
+       y = "REE (kcal/day)", x = "Measurement") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill="grey90"),
+        strip.text = element_text(size=11))
+```
+
+```{r fig-6}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "REE/kg Over Time by Obesity Status"
+
+ggplot(REE, aes(x = Measurement, y = REEperKG, color = ICUorSDU)) +
+  geom_point(size = 2, alpha = 0.6) +
+  geom_smooth(method = "lm", se = TRUE, aes(fill = ICUorSDU), alpha = 0.2) +
+  facet_wrap(~ Obese) +
+  labs(title = "REE per kg Over Recovery by Obesity Status",
+       y = "REE/kg (kcal/kg/day)", x = "Measurement",
+       color = "Location", fill = "Location") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill="grey90"),
+        strip.text = element_text(size=11))
+```
+
+```{r fig-7}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "Spaghetti Plot: REE Over Time"
+
+ggplot(REE, aes(x = Measurement, y = REE, group = ID, color = ID)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Longitudinal REE Trajectories") +
+  theme_bw() +
+  theme(legend.position = "right")
+```
+
+```{r fig-8}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "REE Over Time by Patient"
+
+ggplot(REE, aes(x = Measurement, y = REE)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ ID, scales = "free_y") +
+  labs(title = "Longitudinal REE Trajectories of Each Patient") +
+  theme_bw()
+```
+
+```{r fig-9}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "Residual Plots vs Fitted Values"
+
+p_resid_fit_ree <- ggplot(
+  data.frame(
+    fitted = fitted(REE_model),
+    resid  = resid(REE_model, type = "pearson")
+  ),
+  aes(x = fitted, y = resid)
+) +
+  geom_point(color = "black") +
+  geom_hline(yintercept = 0, color = "red", linetype = "dotted", linewidth = 1) +
+  labs(x = "Fitted Values", y = "Pearson Residuals",
+       title = "Residuals vs Fitted: REE") +
+  theme_bw()
+
+p_resid_fit_reekg <- ggplot(
+  data.frame(
+    fitted = fitted(REEperKG_model),
+    resid  = resid(REEperKG_model, type = "pearson")
+  ),
+  aes(x = fitted, y = resid)
+) +
+  geom_point(color = "black") +
+  geom_hline(yintercept = 0, color = "red", linetype = "dotted", linewidth = 1) +
+  labs(x = "Fitted Values", y = "Pearson Residuals",
+       title = "Residuals vs Fitted: REE/kg") +
+  theme_bw()
+
+p_resid_fit_ree + p_resid_fit_reekg
+```
+
+```{r fig-10}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "Q-Q Plot for Residuals"
+
+p_qq_resid_ree <- ggplot(
+  data.frame(resid = resid(REE_model)),
+  aes(sample = resid)
+) +
+  stat_qq(color = "black") +
+  stat_qq_line(color = "red", linewidth = 1) +
+  labs(title = "Q–Q Plot of Residuals: REE") +
+  theme_bw()
+
+p_qq_resid_reekg <- ggplot(
+  data.frame(resid = resid(REEperKG_model)),
+  aes(sample = resid)
+) +
+  stat_qq(color = "black") +
+  stat_qq_line(color = "red", linewidth = 1) +
+  labs(title = "Q–Q Plot of Residuals: REE/kg") +
+  theme_bw()
+
+p_qq_resid_ree + p_qq_resid_reekg
+```
+
+```{r fig-11}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "Q-Q Plot for Random Effects"
+
+REE_re      <- ranef(REE_model)$ID[[1]]
+REEperKG_re <- ranef(REEperKG_model)$ID[[1]]
+
+p_qq_re_ree <- ggplot(
+  data.frame(re = REE_re),
+  aes(sample = re)
+) +
+  stat_qq(color = "black") +
+  stat_qq_line(color = "red", linewidth = 1) +
+  labs(title = "Q–Q Plot of Random Intercepts: REE") +
+  theme_bw()
+
+p_qq_re_reekg <- ggplot(
+  data.frame(re = REEperKG_re),
+  aes(sample = re)
+) +
+  stat_qq(color = "black") +
+  stat_qq_line(color = "red", linewidth = 1) +
+  labs(title = "Q–Q Plot of Random Intercepts: REE/kg") +
+  theme_bw()
+
+p_qq_re_ree + p_qq_re_reekg
+```
+
+```{r fig-12}
+#| fig-width: 8
+#| fig-height: 4
+#| fig-cap: "Residual Plot vs Measurements (Time)"
+
+REE$resid_REE   <- resid(REE_model, type = "pearson")
+REE$resid_REEkg <- resid(REEperKG_model, type = "pearson")
+
+p_resid_meas_ree <- ggplot(REE, aes(x = Measurement, y = resid_REE)) +
+  geom_point(color = "black", alpha = 0.75, size = 2) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "red", linewidth = 1) +
+  geom_smooth(method = "loess", se = FALSE, color = "blue", linewidth = 1) +
+  labs(
+    title = "Residual by Measurement: REE",
+    x = "Measurement (Recovery Day Index)",
+    y = "Pearson Residuals"
+  ) +
+  theme_bw()
+
+p_resid_meas_reekg <- ggplot(REE, aes(x = Measurement, y = resid_REEkg)) +
+  geom_point(color = "black", alpha = 0.75, size = 2) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "red", linewidth = 1) +
+  geom_smooth(method = "loess", se = FALSE, color = "blue", linewidth = 1) +
+  labs(
+    title = "Residual by Measurement: REE/kg",
+    x = "Measurement (Recovery Day Index)",
+    y = "Pearson Residuals"
+  ) +
+  theme_bw()
+
+p_resid_meas_ree + p_resid_meas_reekg
+```
